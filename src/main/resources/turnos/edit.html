@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{top :: top}"></head>
+
+<body>
+<div class="container">
+
+    <div th:replace="~{header :: header}"></div>
+
+
+
+    <h2>Turno</h2>
+
+    <div class="alert alert-info" th:if="${entity.returno != null}">
+        Returno del turno del <strong th:text="${entity.returno.fecha}"></strong>
+        (<span th:text="${entity.returno.paciente.apellido + ', ' + entity.returno.paciente.nombre}"></span>).
+    </div>
+
+    <div>
+        <form id="formTurno" class="form-horizontal" th:object="${entity}" th:action="@{/turnos}" method="post"
+              th:attr="data-horarios=@{/turnos/horarios}">
+            <input type="hidden" th:field="*{id}"/>
+            <input type="hidden" name="returno" th:value="${entity.returno != null ? entity.returno.id : ''}"/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Fecha</label>
+                <div class="col-sm-10">
+                    <input type="date" class="form-control" th:field="*{fecha}" onchange="recargar()"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Profesional</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="profesional" onchange="recargar()">
+                        <option value="">-- Seleccione --</option>
+                        <option th:each="o : ${profesionales}"
+                                th:value="${o.id}"
+                                th:text="${o.apellido + ', ' + o.nombre + ' - ' + o.especialidad.especialidad}"
+                                th:selected="${entity.profesional != null and entity.profesional.id == o.id}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Horario</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="turnogeneral">
+                        <option value="">-- Seleccione --</option>
+                        <option th:each="h : ${horarios}"
+                                th:value="${h.id}"
+                                th:text="${h.dia.descrip + ' ' + h.horario.descrip + ' ' + h.horario.meridiano}"
+                                th:selected="${entity.turnogeneral != null and entity.turnogeneral.id == h.id}"></option>
+                    </select>
+                    <span class="help-block" th:if="${entity.profesional == null or entity.fecha == null}">
+                        Seleccione la fecha y el profesional para ver los horarios disponibles.
+                    </span>
+                    <span class="help-block" style="color:red;"
+                          th:if="${entity.profesional != null and entity.fecha != null and #lists.isEmpty(horarios)}">
+                        El profesional no tiene horarios libres ese día.
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Paciente</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="paciente">
+                        <option value="">-- Seleccione --</option>
+                        <option th:each="o : ${pacientes}"
+                                th:value="${o.id}"
+                                th:text="${o.apellido + ', ' + o.nombre + ' (' + o.dni + ')'}"
+                                th:selected="${entity.paciente != null and entity.paciente.id == o.id}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Obra social</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="obrasocial">
+                        <option value="">-- Seleccione --</option>
+                        <option th:each="o : ${obrassociales}"
+                                th:value="${o.codigo}"
+                                th:text="${o.nombre + (o.suspendida ? ' (suspendida)' : '')}"
+                                th:selected="${entity.obrasocial != null and entity.obrasocial.codigo == o.codigo}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Descripción</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{descrip}"/>
+                </div>
+            </div>
+
+            <div class="row">
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <a class="btn btn-default" th:href="@{/turnos}">Cancelar</a>
+            </div>
+            <h5 style="color:red;" th:text="${message}"></h5>
+        </form>
+    </div>
+
+    <script>
+        // Al cambiar la fecha o el profesional se vuelven a pedir los horarios disponibles
+        function recargar() {
+            var f = document.getElementById('formTurno');
+            f.action = f.getAttribute('data-horarios');
+            f.submit();
+        }
+    </script>
+
+</div>
+</body>
+</html>

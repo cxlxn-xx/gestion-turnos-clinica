@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{top :: top}"></head>
+
+<body style="background-color: #f5f5f5;">
+
+<div class="container" style="margin-top: 20px; margin-bottom: 40px;">
+
+
+    <div th:replace="~{header :: header}"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary" style="box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div class="panel-heading">
+                    <h3 class="panel-title" style="font-size: 20px;">Panel de Control</h3>
+                </div>
+                <div class="panel-body">
+                    <h3 th:text="${message}" style="margin-top: 0;">Bienvenido al sistema</h3>
+                    <p class="text-muted">Utilice el menú superior para navegar por los módulos del sistema.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Resumen y Acciones -->
+    <div class="row">
+
+        <!-- Tarjeta de Turnos Hoy -->
+        <div class="col-md-6">
+            <div class="panel panel-success" style="text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Resumen del Día</h3>
+                </div>
+                <div class="panel-body">
+                    <p style="font-size: 16px; margin-bottom: 10px;">Turnos activos para hoy</p>
+                    <h1 style="font-size: 60px; color: #5cb85c; margin: 0;" th:text="${turnosHoy}">0</h1>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="panel panel-default" style="text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); height: 100%;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Acciones Rápidas</h3>
+                </div>
+                <div class="panel-body" style="padding-top: 30px;">
+                    <a class="btn btn-success btn-lg btn-block" th:href="@{/turnos/create}" style="margin-bottom: 15px;">
+                        + Asignar Nuevo Turno
+                    </a>
+                    <a class="btn btn-default btn-lg btn-block" th:href="@{/turnos}">
+                        Ver Listado de Turnos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

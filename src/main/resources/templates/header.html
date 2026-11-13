@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="header" class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menuPrincipal">
+                <span class="sr-only">Menú</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" style="font-weight: bold;" th:href="${esProfesional and !esAdmin} ? @{/agenda} : @{/}">
+                Gestión de Turnos
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="menuPrincipal">
+
+            <ul class="nav navbar-nav" th:if="${esAdmin}">
+                <li><a th:href="@{/}">Home</a></li>
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Turnos <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/turnos}">Asignación de Turnos</a></li>
+                        <li><a th:href="@{/turnosgenerales}">Turnos Generales</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Archivos <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/pacientes}">Pacientes</a></li>
+                        <li><a th:href="@{/profesionales}">Profesionales</a></li>
+                        <li><a th:href="@{/especialidades}">Especialidades</a></li>
+                        <li><a th:href="@{/obrassociales}">Obras Sociales</a></li>
+                        <li><a th:href="@{/tipodocs}">Tipos de Documento</a></li>
+                        <li><a th:href="@{/dias}">Días</a></li>
+                        <li><a th:href="@{/horarios}">Horarios</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">General <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/usuarios}">Usuarios</a></li>
+                        <li><a th:href="@{/roles}">Roles</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+
+            <ul class="nav navbar-nav" th:if="${esProfesional and !esAdmin}">
+                <li><a th:href="@{/agenda}">Mi agenda</a></li>
+            </ul>
+
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <p class="navbar-text" th:if="${usuarioActual != null}">
+                        <span class="glyphicon glyphicon-user"></span> <span th:text="${usuarioActual}"></span>
+                    </p>
+                </li>
+                <li><a th:href="@{/password}">Cambiar contraseña</a></li>
+                <li>
+                    <form th:action="@{/logout}" method="post" style="margin: 0; padding: 0;">
+                        <button type="submit" class="btn btn-danger navbar-btn" style="margin-top: 8px; margin-left: 10px;">
+                            Cerrar Sesión
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>

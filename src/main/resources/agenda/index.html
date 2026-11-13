@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{top :: top}"></head>
+
+<body>
+<div class="container">
+
+    <div th:replace="~{header :: header}"></div>
+
+
+    <h2>Mi agenda de turnos</h2>
+    <h4 th:if="${profesional != null}">
+        <span th:text="${profesional.apellido + ', ' + profesional.nombre}"></span>
+        <small th:text="${profesional.especialidad.especialidad}"></small>
+    </h4>
+    <h5 style="color:red;" th:text="${message}"></h5>
+
+    <form class="form-inline" th:action="@{/agenda}" method="get">
+        <div class="form-group">
+            <label>Desde</label>
+            <input type="date" class="form-control" name="desde" th:value="${desde}"/>
+        </div>
+        <div class="form-group">
+            <label>Hasta</label>
+            <input type="date" class="form-control" name="hasta" th:value="${hasta}"/>
+        </div>
+        <button type="submit" class="btn btn-success">Consultar</button>
+    </form>
+
+    <br/>
+
+    <div th:if="${turnos != null and not #lists.isEmpty(turnos)}">
+        <table class="table" width="100%">
+            <tr>
+                <th>Fecha</th>
+                <th>Horario</th>
+                <th>Paciente</th>
+                <th>Teléfono</th>
+                <th>Obra social</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+            </tr>
+            <tr th:each="t : ${turnos}" th:class="${t.estado == 'ANULADO'} ? 'danger' : ''">
+                <td th:text="${t.fecha}"></td>
+                <td th:text="${t.turnogeneral.horario.descrip + ' ' + t.turnogeneral.horario.meridiano}"></td>
+                <td th:text="${t.paciente.apellido + ', ' + t.paciente.nombre}"></td>
+                <td th:text="${t.paciente.telefono}"></td>
+                <td th:text="${t.obrasocial.nombre}"></td>
+                <td th:text="${t.descrip}"></td>
+                <td th:text="${t.estado}"></td>
+            </tr>
+        </table>
+    </div>
+    <div th:if="${profesional != null and (turnos == null or #lists.isEmpty(turnos))}">
+        <p>No hay turnos en el período seleccionado.</p>
+    </div>
+
+
+
+</div>
+</body>
+</html>

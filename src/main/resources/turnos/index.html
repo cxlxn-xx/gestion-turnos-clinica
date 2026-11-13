@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{top :: top}"></head>
+
+<body>
+<div class="container">
+
+    <div th:replace="~{header :: header}"></div>
+
+
+
+    <h2>Asignación de Turnos</h2>
+
+    <div class="row">
+        <div class="col-sm-9">
+            <form class="form-inline" th:action="@{/turnos}" method="get">
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" class="form-control" name="fecha" th:value="${fecha}"/>
+                </div>
+                <div class="form-group">
+                    <label>Profesional</label>
+                    <select class="form-control" name="profesional">
+                        <option value="">Todos</option>
+                        <option th:each="p : ${profesionales}" th:value="${p.id}"
+                                th:text="${p.apellido + ', ' + p.nombre}"
+                                th:selected="${profesionalSel != null and profesionalSel == p.id}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="q" th:value="${q}" placeholder="Paciente..."/>
+                </div>
+                <button type="submit" class="btn btn-success">Buscar</button>
+                <a class="btn btn-info" th:href="@{/turnos/refresh}">Limpiar</a>
+            </form>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-default" th:href="@{/turnos/create}">Nuevo turno</a>
+        </div>
+        <div class="col-sm-12">
+            <h5 style="color:red;" th:text="${message}"></h5>
+        </div>
+    </div>
+
+    <br/>
+
+    <div th:if="${not #lists.isEmpty(entities)}">
+        <table class="table" width="100%">
+            <tr>
+                <th>Fecha</th>
+                <th>Horario</th>
+                <th>Paciente</th>
+                <th>Profesional</th>
+                <th>Obra social</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+            <tr th:each="e : ${entities}" th:class="${e.estado == 'ANULADO'} ? 'danger' : ''">
+                <td th:text="${e.fecha}"></td>
+                <td th:text="${e.turnogeneral.dia.abreviatura + ' ' + e.turnogeneral.horario.descrip + ' ' + e.turnogeneral.horario.meridiano}"></td>
+                <td th:text="${e.paciente.apellido + ', ' + e.paciente.nombre}"></td>
+                <td th:text="${e.profesional.apellido + ', ' + e.profesional.nombre}"></td>
+                <td th:text="${e.obrasocial.nombre}"></td>
+                <td th:text="${e.returno != null ? 'Returno' : 'Turno'}"></td>
+                <td th:text="${e.estado}"></td>
+                <td th:if="${e.estado == 'ACTIVO'}">
+                    <a class="btn btn-warning btn-sm" th:href="@{/turnos/edit/{id}(id=${e.id})}">Editar</a>
+                    <a class="btn btn-primary btn-sm" th:href="@{/turnos/returno/{id}(id=${e.id})}">Returno</a>
+                    <a class="btn btn-danger btn-sm" href="#"
+                       th:attr="data-url=@{/turnos/anular/{id}(id=${e.id})}"
+                       onclick="return confirmAction(this, '¿Seguro que desea anular el turno?');">Anular</a>
+                </td>
+                <td th:if="${e.estado != 'ACTIVO'}"></td>
+            </tr>
+        </table>
+    </div>
+    <div th:if="${#lists.isEmpty(entities)}">
+        <p>No hay turnos para los filtros indicados.</p>
+    </div>
+
+    <div th:if="${page != null}">
+        <div class="col-sm-7">
+
+            <div class="text-center">
+                <ul class="pagination pagination-centered">
+                    <li th:class="${page.firstPage}?'disabled':''">
+                        <span th:if="${page.firstPage}">← First</span>
+                        <a th:if="${not page.firstPage}" th:href="@{${page.url}(page=0,size=${page.size})}">← First</a>
+                    </li>
+                    <li th:class="${page.hasPreviousPage}? '' : 'disabled'">
+                        <span th:if="${not page.hasPreviousPage}">«</span>
+                        <a th:if="${page.hasPreviousPage}"
+                           th:href="@{${page.url}(page=${page.number-2},size=${page.size})}"
+                           title="Página anterior">«</a>
+                    </li>
+                    <li th:each="item : ${page.items}" th:class="${item.current}? 'active' : ''">
+                        <span th:if="${item.current}" th:text="${item.number}">1</span>
+                        <a th:if="${not item.current}"
+                           th:href="@{${page.url}(page=${item.number-1},size=${page.size})}"><span
+                                th:text="${item.number}">1</span></a>
+                    </li>
+                    <li th:class="${page.hasNextPage}? '' : 'disabled'">
+                        <span th:if="${not page.hasNextPage}">»</span>
+                        <a th:if="${page.hasNextPage}"
+                           th:href="@{${page.url}(page=${page.number},size=${page.size})}"
+                           title="Página siguiente">»</a>
+                    </li>
+                    <li th:class="${page.lastPage}? 'disabled' : ''">
+                        <span th:if="${page.lastPage}">Last →</span>
+                        <a th:if="${not page.lastPage}"
+                           th:href="@{${page.url}(page=${page.totalPages - 1},size=${page.size})}">Last →</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+</body>
+</html>

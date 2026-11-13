@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{top :: top}"></head>
+
+<body>
+<div class="container">
+
+    <div th:replace="~{header :: header}"></div>
+
+
+
+    <h2>Profesional</h2>
+    <div>
+        <form class="form-horizontal" th:object="${entity}" th:action="@{/profesionales}" method="post">
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Apellido</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{apellido}"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Nombre</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{nombre}"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Tipo Documento</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="tipodoc">
+                        <option th:each="o : ${tiposdocs}"
+                                th:value="${o.id}"
+                                th:text="${o.descrip}"
+                                th:selected="${entity.tipodoc != null and entity.tipodoc.id == o.id}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Nro. Documento</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{dni}"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Matrícula</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{matricula}"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Teléfono</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{telefono}"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Especialidad</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="especialidad">
+                        <option th:each="o : ${especialidades}"
+                                th:value="${o.id}"
+                                th:text="${o.especialidad}"
+                                th:selected="${entity.especialidad != null and entity.especialidad.id == o.id}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Usuario (acceso a su agenda)</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="usuario">
+                        <option value="">-- Sin usuario --</option>
+                        <option th:each="o : ${usuarios}"
+                                th:value="${o.id}"
+                                th:text="${o.usuario}"
+                                th:selected="${entity.usuario != null and entity.usuario.id == o.id}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <a class="btn btn-default" th:href="@{/profesionales}">Cancelar</a>
+            </div>
+            <h5 style="color:red;" th:text="${message}"></h5>
+        </form>
+    </div>
+
+    <!-- Fin Zona de Ajuste -->
+
+</div>
+</body>
+</html>

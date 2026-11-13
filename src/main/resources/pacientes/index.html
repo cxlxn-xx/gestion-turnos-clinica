@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{top :: top}"></head>
+
+<body>
+<div class="container">
+
+    <div th:replace="~{header :: header}"></div>
+
+    <h2>Pacientes</h2>
+
+    <div class="row">
+        <div class="col-sm-5">
+            <form class="form-horizontal" th:object="${entity}" th:action="@{/pacientes/search}" method="post">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" th:field="*{apellido}" placeholder="Buscar..."/>
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="submit" class="btn btn-success">Buscar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-info" th:href="@{/pacientes/refresh}">Refrescar</a>
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-default" th:href="@{/pacientes/create}">Nuevo</a>
+        </div>
+        <div class="col-sm-11">
+            <h5 style="color:red;" th:text="${message}"></h5>
+        </div>
+    </div>
+
+    <br/>
+
+    <div th:if="${not #lists.isEmpty(entities)}">
+        <table class="table" width="100%">
+            <tr>
+                <th>Apellido</th>
+                <th>Nombre</th>
+                <th>Documento</th>
+                <th>Dirección</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Editar</th>
+                <th>Borrar</th>
+            </tr>
+            <tr th:each="e : ${entities}">
+                <td th:text="${e.apellido}"></td>
+                <td th:text="${e.nombre}"></td>
+                <td th:text="${e.tipodoc.descrip + ' ' + e.dni}"></td>
+                <td th:text="${e.direccion}"></td>
+                <td th:text="${e.email}"></td>
+                <td th:text="${e.telefono}"></td>
+                <td width="5%"><a class="btn btn-warning" th:href="@{/pacientes/edit/{id}(id=${e.id})}">Editar</a></td>
+                <td width="5%"><a class="btn btn-danger" href="#"
+                                  th:attr="data-url=@{/pacientes/delete/{id}(id=${e.id})}"
+                                  onclick="return confirmDelete(this);">Borrar</a></td>
+            </tr>
+        </table>
+    </div>
+    <div th:if="${#lists.isEmpty(entities)}">
+        <p>No hay registros.</p>
+    </div>
+
+    <div th:if="${page != null}">
+        <div class="col-sm-7">
+            <!-- Barra de paginado -->
+            <div class="text-center">
+                <ul class="pagination pagination-centered">
+                    <li th:class="${page.firstPage}?'disabled':''">
+                        <span th:if="${page.firstPage}">← First</span>
+                        <a th:if="${not page.firstPage}" th:href="@{${page.url}(page=0,size=${page.size})}">← First</a>
+                    </li>
+                    <li th:class="${page.hasPreviousPage}? '' : 'disabled'">
+                        <span th:if="${not page.hasPreviousPage}">«</span>
+                        <a th:if="${page.hasPreviousPage}"
+                           th:href="@{${page.url}(page=${page.number-2},size=${page.size})}"
+                           title="Página anterior">«</a>
+                    </li>
+                    <li th:each="item : ${page.items}" th:class="${item.current}? 'active' : ''">
+                        <span th:if="${item.current}" th:text="${item.number}">1</span>
+                        <a th:if="${not item.current}"
+                           th:href="@{${page.url}(page=${item.number-1},size=${page.size})}"><span
+                                th:text="${item.number}">1</span></a>
+                    </li>
+                    <li th:class="${page.hasNextPage}? '' : 'disabled'">
+                        <span th:if="${not page.hasNextPage}">»</span>
+                        <a th:if="${page.hasNextPage}"
+                           th:href="@{${page.url}(page=${page.number},size=${page.size})}"
+                           title="Página siguiente">»</a>
+                    </li>
+                    <li th:class="${page.lastPage}? 'disabled' : ''">
+                        <span th:if="${page.lastPage}">Last →</span>
+                        <a th:if="${not page.lastPage}"
+                           th:href="@{${page.url}(page=${page.totalPages - 1},size=${page.size})}">Last →</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+</body>
+</html>

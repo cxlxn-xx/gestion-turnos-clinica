@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{top :: top}"></head>
+
+<body>
+<div class="container">
+
+    <div th:replace="~{header :: header}"></div>
+
+
+
+    <h2>Horarios del Profesional</h2>
+    <h4>
+        <span th:text="${profesional.apellido + ', ' + profesional.nombre}"></span>
+        <small th:text="${profesional.especialidad.especialidad}"></small>
+    </h4>
+    <h5 style="color:green;" th:text="${message}"></h5>
+
+    <!-- Un solapa por día -->
+    <ul class="nav nav-tabs">
+        <li th:each="d : ${dias}" th:class="${diaSel != null and d.id == diaSel.id} ? 'active' : ''">
+            <a th:href="@{/profesionales/{id}/horarios(id=${profesional.id},dia=${d.id})}" th:text="${d.descrip}"></a>
+        </li>
+    </ul>
+
+    <br/>
+
+    <div th:if="${diaSel != null}">
+        <form th:action="@{/profesionales/{id}/horarios(id=${profesional.id})}" method="post">
+            <input type="hidden" name="dia" th:value="${diaSel.id}"/>
+
+            <p>
+                Tilde los horarios en los que el profesional atiende los días
+                <strong th:text="${diaSel.descrip}"></strong>.
+                <a href="#" onclick="return marcar(true);">Marcar todos</a> |
+                <a href="#" onclick="return marcar(false);">Desmarcar todos</a>
+            </p>
+
+            <div th:if="${#lists.isEmpty(turnosGenerales)}">
+                <p style="color:red;">No hay turnos generales para este día. Créelos desde Turnos &gt; Turnos Generales.</p>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-2" style="margin-bottom: 6px;" th:each="t : ${turnosGenerales}">
+                    <label>
+                        <input type="checkbox" name="tg" th:value="${t.id}" th:checked="${asignados.contains(t.id)}"/>
+                        <span th:text="${t.horario.descrip + ' ' + t.horario.meridiano}"></span>
+                        <small th:if="${!t.estado}">(inactivo)</small>
+                    </label>
+                </div>
+            </div>
+
+            <br/>
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <a class="btn btn-default" th:href="@{/profesionales}">Volver a Profesionales</a>
+        </form>
+    </div>
+
+    <script>
+        function marcar(valor) {
+            var cajas = document.getElementsByName('tg');
+            for (var i = 0; i < cajas.length; i++) {
+                cajas[i].checked = valor;
+            }
+            return false;
+        }
+    </script>
+
+
+</div>
+</body>
+</html>
